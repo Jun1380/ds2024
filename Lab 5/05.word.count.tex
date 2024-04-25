@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{File Transfer Protocol}
+\author{Do Tuan Dung BI12-104}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This Python code utilizes a functional approach rather than a traditional MapReduce framework. Here's an explanation of how it achieves file searching without a Mapper and Reducer
+
+\section{Functionality:}
+Function Definition: The code defines a function find_files_with_extension that takes two arguments:
+\\\ +)extension: The file extension to search for (e.g., "txt", "jpg").
+\\\ +)search_path (optional): The    directory path to search in (defaults to the current directory).
+\\\ +)File Path Generation: The function uses the glob module's glob.glob function to generate file paths. It constructs a pattern string f"{search_path}/*.{extension}" which expands to "path/.extension" (e.g., "C:/data/.txt").
+\\\ +)Search and Store: The glob.glob function searches for files matching the pattern in the specified directory and returns a list of matching file paths. This list is stored in the found_file_paths variable.
+\\\ +)User Input: The code prompts the user for the extension and search path (optional).
+\\\ +)File Listing:
+If found_file_paths is not empty (meaning files were found), the script iterates through the list and prints each file path.
+If no files are found, it displays a message indicating no matches.
+\subsection{The Longest Path:}
+ Here is the "lgp.py" file:
+\begin{verbatim}
+import glob
+
+def find_files_with_extension(extension, search_path="."):
+  """
+  This function searches for files with a specific extension in the given path.
+  """
+  found_file_paths = []
+  for file in glob.glob(f"{search_path}/*.{extension}"):
+    found_file_paths.append(file)
+  return found_file_paths
+
+extension_to_find = input("Enter the file extension to find (e.g., txt, jpg): ")
+search_path = input("Enter the search path (leave blank for current directory): ") or "."
+
+found_file_paths = find_files_with_extension(extension_to_find, search_path)
+
+if found_file_paths:
+  print("File(s) found:")
+  for file_path in found_file_paths:
+    print(file_path)
+else:
+  print("No file(s) found with the specified extension.")
+
+
+
+\end{verbatim}
+\end{document}
+
