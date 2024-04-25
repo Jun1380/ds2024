@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{File Transfer Protocol}
+\author{Do Tuan Dung BI12-104}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report details the chosen MapReduce implementation for word counting and explains how the Mapper and Reducer functions work.
+\end{abstract}
+
+\section{Introduction}
+
+This report examines a C language MapReduce implementation for word counting. It explores the chosen approach and explains how the Mapper and Reducer functions operate to efficiently count word occurrences within a text dataset.
+
+\section{Choosen Implementation}
+The provided C code implements a MapReduce program for word counting using dynamic memory allocation. This approach offers flexibility compared to a fixed-size array for the intermediate results.
+\subsection{Word Count:}
+ Here is the "wordcount.c" file:
+\begin{verbatim}
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+int main(int argc, char *argv[]) {
+  MPI_Init(&argc, &argv);
+
+  int rank, size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+  if (rank == 0) {
+    printf("Client (rank %d): Enter the filename to transfer: ", rank);
+    char filename[BUFFER_SIZE];
+    fgets(filename, BUFFER_SIZE, stdin);
+    filename[strcspn(filename, "\n")] = 0; 
+
+    MPI_Send(filename, BUFFER_SIZE, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
+
+    int file_size;
+    MPI_Recv(&file_size, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    printf("Server: File size: %d bytes\n", file_size); 
+
+    int bytes_received;
+    char buffer[BUFFER_SIZE];
+    FILE *output_file = fopen("received_file.txt", "wb");  
+    while ((bytes_received = MPI_Recv(buffer, BUFFER_SIZE, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE)) > 0) {
+      fwrite(buffer, sizeof(char), bytes_received, output_file);
+    }
+
+    fclose(output_file);
+    printf("Client: File transfer complete.\n");
+  }
+
+  MPI_Finalize();
+  return 0;
+}
+
+\end{verbatim}
+\end{document}
+
